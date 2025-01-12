@@ -1,0 +1,18 @@
+service: ts-serverless
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs22.x
+  stage: ${opt:stage, 'dev'}
+  region: ap-east-1
+  environment: ${file(./env/.env.${self:provider.stage, 'dev'}.yml):variables}
+
+functions:
+  eventbridgeFn:
+    handler: dist/index.handler
+    events:
+      - eventBridge:
+          enabled: false
+          schedule: rate(10 minutes)
